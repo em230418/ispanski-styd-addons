@@ -1,5 +1,5 @@
-import logging
 import inspect
+import logging
 
 from odoo.tests import tagged
 
