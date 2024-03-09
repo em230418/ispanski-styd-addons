@@ -26,11 +26,9 @@ class TestSessionClose(TestPoSCommon):
 
     def test_late_session_close(self):
         method_name = inspect.currentframe().f_code.co_name
-        config1 = self._create_basic_config()
-        config2 = self._create_basic_config()
 
         # В первом POS открываем сессию
-        self.config = config1
+        self.config = self._create_basic_config()
         self.open_new_session()
         session1 = self.pos_session
 
@@ -39,7 +37,7 @@ class TestSessionClose(TestPoSCommon):
         orders.append(
             self.create_ui_order_data(
                 [(self.product1, 1)],
-                payments=[(self.cash_pm, 10)],
+                payments=[(self.cash_pm1, 10)],
             )
         )
 
@@ -48,14 +46,14 @@ class TestSessionClose(TestPoSCommon):
         # Не закрываем сессию в первом POS
         # и открываем и закрываем много сессий на втором POS-е
         # в каждой сессии также по одному заказу оплачиваем наличкой
-        self.config = config2
+        self.config = self._create_basic_config()
 
         for i in range(1000):
             _logger.info("%s: running session %s" % (method_name, i))
             self.open_new_session()
             order = self.create_ui_order_data(
                 [(self.product1, 1)],
-                payments=[(self.cash_pm, 10)],
+                payments=[(self.cash_pm1, 10)],
             )
             self.env["pos.order"].create_from_ui([order])
             self.pos_session.action_pos_session_validate()
@@ -66,9 +64,9 @@ class TestSessionClose(TestPoSCommon):
 
     def test_1000_pos_configs(self):
         method_name = inspect.currentframe().f_code.co_name
-        configs = [self._create_basic_config() for x in range(1000)]
 
-        for i, pos in enumerate(configs):
+        for i in range(1000):
+            pos = self._create_basic_config()
             # открываем очередную кассу
             _logger.info("%s: running session %s" % (method_name, i))
             self.config = pos
@@ -79,7 +77,7 @@ class TestSessionClose(TestPoSCommon):
             orders.append(
                 self.create_ui_order_data(
                     [(self.product1, 1)],
-                    payments=[(self.cash_pm, 10)],
+                    payments=[(self.cash_pm1, 10)],
                 )
             )
             self.env["pos.order"].create_from_ui(orders)
