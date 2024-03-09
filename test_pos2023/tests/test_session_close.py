@@ -1,4 +1,5 @@
 import logging
+import inspect
 
 from odoo.tests import tagged
 
@@ -26,6 +27,8 @@ class TestSessionClose(TestPoSCommon):
         )
 
     def test_late_session_close(self):
+        method_name = inspect.currentframe().f_code.co_name
+
         # В первом POS открываем сессию
         self.config = self.config1
         self.open_new_session()
@@ -48,7 +51,7 @@ class TestSessionClose(TestPoSCommon):
         self.config = self.config2
 
         for i in range(1000):
-            _logger.info("running session %s" % (i,))
+            _logger.info("%s: running session %s" % (method_name, i))
             self.open_new_session()
             order = self.create_ui_order_data(
                 [(self.product1, 1)],
@@ -60,3 +63,28 @@ class TestSessionClose(TestPoSCommon):
         # Ну а теперь попробуем закрывать самую первую сессию
         _logger.info("closing very first session")
         self.session1.action_pos_session_validate()
+
+    def test_1000_pos_configs(self):
+        method_name = inspect.currentframe().f_code.co_name
+
+        for i, pos in enumerate(self.configs):
+            _logger.info("%s: running session %s" % (method_name, i))
+            self.config = pos
+            self.open_new_session()
+            self.sessions.append(self.pos_session)
+
+            orders = []
+            orders.append(
+                self.create_ui_order_data(
+                    [(self.product1, 1)],
+                    payments=[(self.cash_pm, 10)],
+                )
+            )
+            self.env["pos.order"].create_from_ui(orders)
+
+            if i == 0:
+                first_session = self.pos_session
+            else:
+                self.pos_session.action_pos_session_validate()
+
+            first_session.action_pos_session_validate()
