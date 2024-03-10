@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 @tagged("post_install", "-at_install")
 class TestSessionClose(TestPoSCommon):
     def setUp(self):
-        super(TestPoSCommon, self).setUp()
+        super(TestSessionClose, self).setUp()
         self.product1 = self.env["product.product"].create(
             {
                 "type": "consu",
