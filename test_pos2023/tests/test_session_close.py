@@ -38,8 +38,7 @@ class TestSessionClose(TestPoSCommon):
         orders = []
         orders.append(
             self.create_ui_order_data(
-                [(self.product1, 1)],
-                payments=[(self.cash_pm, 10)],
+                [(self.product1, 1)], payments=[(self.cash_pm, 10)],
             )
         )
 
@@ -54,8 +53,7 @@ class TestSessionClose(TestPoSCommon):
             _logger.info("%s: running session %s" % (method_name, i))
             self.open_new_session()
             order = self.create_ui_order_data(
-                [(self.product1, 1)],
-                payments=[(self.cash_pm, 10)],
+                [(self.product1, 1)], payments=[(self.cash_pm, 10)],
             )
             self.env["pos.order"].create_from_ui([order])
             self.pos_session.action_pos_session_validate()
@@ -78,8 +76,7 @@ class TestSessionClose(TestPoSCommon):
             orders = []
             orders.append(
                 self.create_ui_order_data(
-                    [(self.product1, 1)],
-                    payments=[(self.cash_pm, 10)],
+                    [(self.product1, 1)], payments=[(self.cash_pm, 10)],
                 )
             )
             self.env["pos.order"].create_from_ui(orders)
